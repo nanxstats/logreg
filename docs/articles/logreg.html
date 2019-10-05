@@ -145,7 +145,7 @@
 <p>For the ridge model, some shrinkage effects are observed while no sparsity was induced, as expected:</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="kw"><a href="../reference/plot_coef.html">plot_coef</a></span>(fit_ridge)</span></code></pre></div>
 <p><img src="logreg_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
-<p>For the SELO model, we can see the shrinkage effect and apparent sparsity in the estimation results. Note that the near-zero coefficients are not estimated as exactly 0, due to the limitation of our unconstrained gradient-based optimization method.</p>
+<p>For the SELO model, we can see the shrinkage effect and apparent sparsity in the estimation results. Note that the near-zero coefficients are not estimated as precisely 0, due to the limitation of our unconstrained gradient-based optimization method.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="kw"><a href="../reference/plot_coef.html">plot_coef</a></span>(fit_selo)</span></code></pre></div>
 <p><img src="logreg_files/figure-html/unnamed-chunk-7-1.png" width="700"></p>
 <p>The multi-step adaptive elastic-net gave us a model closest to the true model, with 4 in 5 true variables estimated to be non-zero, with all others being 0 (1 false negative):</p>
