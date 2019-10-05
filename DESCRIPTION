@@ -1,0 +1,24 @@
+Package: logreg
+Type: Package
+Title: Regularized Logistic Regressions with Computational Graphs
+Version: 0.1.0
+Authors@R: c(
+    person("Nan", "Xiao", email = "me@nanx.me", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-0250-5673")))
+Maintainer: Nan Xiao <me@nanx.me>
+Description: Fit logistic regression and regularized logistic regression
+    models with computational graph, automatic differentiation,
+    and stochastic gradient descent.
+License: MIT + file LICENSE
+URL: https://nanx.me/logreg/, https://github.com/nanxstats/logreg
+Encoding: UTF-8
+LazyData: true
+VignetteBuilder: knitr
+Imports:
+    cgraph,
+    msaenet,
+    pROC
+Suggests:
+    knitr,
+    rmarkdown
+RoxygenNote: 6.1.1

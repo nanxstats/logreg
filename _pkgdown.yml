@@ -1,0 +1,24 @@
+reference:
+  - title: "Fit Models"
+    desc: >
+      Functions for fitting regression models.
+    contents:
+      - fit_logistic
+      - fit_logistic_ridge
+      - fit_logistic_selo
+  - title: "Initializers"
+    desc: "Initializer functions."
+    contents:
+      - initialize_constant
+      - initialize_glorot_normal
+  - title: "Losses"
+    desc: "Loss functions."
+    contents:
+      - crossentropy
+  - title: "Evaluate Models"
+    desc: "Functions for evaluating models."
+    contents:
+      - plot_error
+      - plot_coef
+      - predict.logreg
+      - auc
