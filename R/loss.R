@@ -7,7 +7,5 @@
 #'
 #' @export crossentropy
 crossentropy <- function(y, p) {
-  y <- cg_as_numeric(y)
-  p <- cg_as_numeric(p)
-  cg_neg(cg_add(cg_mul(y, cg_ln(p)), cg_mul(cg_sub(1, y), cg_ln(cg_sub(1, p)))))
+  -(y * cg_ln(p) + (1 - y) * cg_ln(1 - p))
 }
