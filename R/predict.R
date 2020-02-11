@@ -8,6 +8,7 @@
 #'
 #' @export
 predict.logreg <- function(object, newdata, ...) {
-  pred <- cg_graph_run(object$graph, object$loss, list("input" = newdata, "target" = 0))
-  pred$output
+  object$input$value <- newdata
+  cg_graph_forward(object$graph, object$output)
+  object$output$value
 }

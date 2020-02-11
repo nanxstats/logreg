@@ -13,11 +13,11 @@ fit_logistic <- function(x, y, learning_rate = 0.05, n_epochs = 1) {
   y <- as.numeric(y)
 
   # y = beta X + alpha
-  graph <- cg_graph()
+  graph <- cg_graph(eager = FALSE)
 
   # initialize input (X), target (y)
-  input <- cg_input("input")
-  target <- cg_input("target")
+  input <- cg_constant(x, "input")
+  target <- cg_constant(y, "target")
 
   # intialize parameters (beta, alpha)
   parms <- list(
@@ -26,7 +26,7 @@ fit_logistic <- function(x, y, learning_rate = 0.05, n_epochs = 1) {
   )
 
   # define the model
-  output <- cg_sigmoid(cg_add(cg_matmul(input, parms$beta), cg_as_numeric(parms$alpha)), "output")
+  output <- cg_sigmoid(cg_linear(input, parms$beta, parms$alpha), "output")
 
   # define cost function
   loss <- cg_mean(crossentropy(target, output), "loss")
@@ -36,13 +36,13 @@ fit_logistic <- function(x, y, learning_rate = 0.05, n_epochs = 1) {
 
   # optimize parameters via sgd
   for (i in 1:n_epochs) {
-    values <- cg_graph_run(graph, loss, list(input = x, target = y))
-    grads <- cg_graph_gradients(graph, loss, values)
-    for (parm in parms) parm$value <- parm$value - learning_rate * grads[[parm$name]]
-    error[i] <- values$loss
+    cg_graph_forward(graph, loss)
+    cg_graph_backward(graph, loss)
+    for (parm in parms) parm$value <- parm$value - learning_rate * parm$grad
+    error[i] <- loss$value
   }
 
-  lst <- list("graph" = graph, "loss" = loss, "error" = error)
+  lst <- list("graph" = graph, "input" = input, "output" = output, "error" = error)
   class(lst) <- "logreg"
   lst
 }
@@ -61,11 +61,11 @@ fit_logistic_ridge <- function(x, y, learning_rate = 0.05, n_epochs = 1, lambda 
   y <- as.numeric(y)
 
   # y = beta X + alpha
-  graph <- cg_graph()
+  graph <- cg_graph(eager = FALSE)
 
   # initialize input (X), target (y)
-  input <- cg_input("input")
-  target <- cg_input("target")
+  input <- cg_constant(x, "input")
+  target <- cg_constant(y, "target")
 
   # intialize parameters (beta, alpha)
   parms <- list(
@@ -74,12 +74,12 @@ fit_logistic_ridge <- function(x, y, learning_rate = 0.05, n_epochs = 1, lambda 
   )
 
   # define the model
-  output <- cg_sigmoid(cg_add(cg_matmul(input, parms$beta), cg_as_numeric(parms$alpha)), "output")
+  output <- cg_sigmoid(cg_linear(input, parms$beta, parms$alpha), "output")
 
   # define cost function
   loss <- cg_add(
     cg_mean(crossentropy(target, output)),
-    cg_div(cg_mean(cg_mul(lambda, cg_sum(cg_pow(parms$beta, 2)))), 2),
+    cg_mean(lambda * cg_sum(parms$beta^2)) / 2,
     "loss"
   )
 
@@ -88,13 +88,13 @@ fit_logistic_ridge <- function(x, y, learning_rate = 0.05, n_epochs = 1, lambda 
 
   # optimize parameters via sgd
   for (i in 1:n_epochs) {
-    values <- cg_graph_run(graph, loss, list(input = x, target = y))
-    grads <- cg_graph_gradients(graph, loss, values)
-    for (parm in parms) parm$value <- parm$value - learning_rate * grads[[parm$name]]
-    error[i] <- values$loss
+    cg_graph_forward(graph, loss)
+    cg_graph_backward(graph, loss)
+    for (parm in parms) parm$value <- parm$value - learning_rate * parm$grad
+    error[i] <- loss$value
   }
 
-  lst <- list("graph" = graph, "loss" = loss, "error" = error)
+  lst <- list("graph" = graph, "input" = input, "output" = output, "error" = error)
   class(lst) <- "logreg"
   lst
 }
@@ -113,11 +113,11 @@ fit_logistic_selo <- function(x, y, learning_rate = 0.05, n_epochs = 1, tau = 0.
   y <- as.numeric(y)
 
   # y = beta X + alpha
-  graph <- cg_graph()
+  graph <- cg_graph(eager = FALSE)
 
   # initialize input (X), target (y)
-  input <- cg_input("input")
-  target <- cg_input("target")
+  input <- cg_constant(x, "input")
+  target <- cg_constant(y, "target")
 
   # intialize parameters (beta, alpha)
   parms <- list(
@@ -126,12 +126,12 @@ fit_logistic_selo <- function(x, y, learning_rate = 0.05, n_epochs = 1, tau = 0.
   )
 
   # define the model
-  output <- cg_sigmoid(cg_add(cg_matmul(input, parms$beta), cg_as_numeric(parms$alpha)), "output")
+  output <- cg_sigmoid(cg_linear(input, parms$beta, parms$alpha), "output")
 
   # define the SELO (seamless l0) loss
   loss <- cg_add(
     cg_mean(crossentropy(target, output)),
-    cg_div(cg_mean(cg_ln(cg_add(cg_div(cg_abs(parms$beta), cg_add(cg_abs(parms$beta), tau)), 1))), log(2)),
+    cg_mean(cg_ln((cg_abs(parms$beta) / (cg_abs(parms$beta) + tau)) + 1)) / log(2),
     "loss"
   )
 
@@ -140,13 +140,13 @@ fit_logistic_selo <- function(x, y, learning_rate = 0.05, n_epochs = 1, tau = 0.
 
   # optimize parameters via sgd
   for (i in 1:n_epochs) {
-    values <- cg_graph_run(graph, loss, list(input = x, target = y))
-    grads <- cg_graph_gradients(graph, loss, values)
-    for (parm in parms) parm$value <- parm$value - learning_rate * grads[[parm$name]]
-    error[i] <- values$loss
+    cg_graph_forward(graph, loss)
+    cg_graph_backward(graph, loss)
+    for (parm in parms) parm$value <- parm$value - learning_rate * parm$grad
+    error[i] <- loss$value
   }
 
-  lst <- list("graph" = graph, "loss" = loss, "error" = error)
+  lst <- list("graph" = graph, "input" = input, "output" = output, "error" = error)
   class(lst) <- "logreg"
   lst
 }
