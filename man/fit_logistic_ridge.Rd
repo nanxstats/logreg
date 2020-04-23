@@ -4,8 +4,7 @@
 \alias{fit_logistic_ridge}
 \title{fit a regularized logistic regression model (ridge penalty)}
 \usage{
-fit_logistic_ridge(x, y, learning_rate = 0.05, n_epochs = 1,
-  lambda = 1)
+fit_logistic_ridge(x, y, learning_rate = 0.05, n_epochs = 1, lambda = 1)
 }
 \arguments{
 \item{x}{predictor matrix (n x p)}

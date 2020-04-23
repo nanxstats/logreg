@@ -4,8 +4,7 @@
 \alias{fit_logistic_selo}
 \title{fit a regularized logistic regression model (SELO penalty)}
 \usage{
-fit_logistic_selo(x, y, learning_rate = 0.05, n_epochs = 1,
-  tau = 0.1)
+fit_logistic_selo(x, y, learning_rate = 0.05, n_epochs = 1, tau = 0.1)
 }
 \arguments{
 \item{x}{predictor matrix (n x p)}
