@@ -6,7 +6,7 @@ output:
     toc: true
     toc_float: false
     toc_depth: 4
-    number_sections: true
+    number_sections: false
     highlight: "textmate"
     css: "custom.css"
 vignette: >
@@ -14,7 +14,14 @@ vignette: >
   %\VignetteIndexEntry{Regularized Logistic Regressions with Computational Graphs}
 ---
 
-# Introduction
+```{r, include=FALSE}
+knitr::opts_chunk$set(
+  comment = "#>",
+  collapse = TRUE
+)
+```
+
+## Introduction
 
 The `logreg` package implemented logistic regression and regularized logistic regression models with the computational graph and automatic differentiation framework provided by the R package [`cgraph`](https://github.com/triepels/cgraph).
 
@@ -28,7 +35,7 @@ We will also compare them with one existing method to make sure the data can be 
 
 - Logistic regression with [multi-step adaptive elastic-net](https://nanx.me/msaenet/) ($\ell_1$-$\ell_2$ based but approximately non-convex regularization)
 
-# Generate data
+## Generate data
 
 Let's simulate some data for testing high-dimensional linear models:
 
@@ -50,7 +57,7 @@ Now we have
 - 500 variables with the first 5 of them being true variables;
 - Moderate correlations between variables (`rho = 0.5`) and moderate signal-to-noise ratio (`snr = 2`).
 
-# Fit the models
+## Fit the models
 
 Fit the models on the training set:
 
@@ -61,7 +68,7 @@ fit_selo <- fit_logistic_selo(x = sim$x.tr, y = sim$y.tr, n_epochs = 500, tau = 
 fit_msaenet <- msaenet(sim$x.tr, sim$y.tr, family = "binomial", init = "ridge", tune = "ebic", nsteps = 10L, seed = 2009)
 ```
 
-# Convergence
+## Convergence
 
 Plot the training errors vs. epochs:
 
@@ -74,7 +81,7 @@ plot_error(fit_selo)
 
 The ridge model converged around 100 epochs, much faster than the other two models (vanilla and SELO).
 
-# Estimated coefficients
+## Estimated coefficients
 
 Let's plot the estimated coefficients and see if they meet our expectations.
 
@@ -102,7 +109,7 @@ The multi-step adaptive elastic-net gave us a model closest to the true model, w
 plot_coef(fit_msaenet)
 ```
 
-# Predictive performance
+## Predictive performance
 
 Let's compute AUC on the training and test set.
 

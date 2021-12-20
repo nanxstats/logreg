@@ -1,3 +1,8 @@
+url: https://nanx.me/logreg/
+
+template:
+  bootstrap: 5
+
 reference:
   - title: "Fit Models"
     desc: >
